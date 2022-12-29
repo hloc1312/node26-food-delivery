@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  mysql: 
+    image: mysql
+    container_name: node26-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=node26-food-delivery
+    ports:
+      - 3306:3306
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: node26-api
+    env_file:
+      - .env
+    ports:
+      - 4000:4000
+    depends_on:
+      - mysql
+    # Nếu khai báo command sẽ override lại CMD trong Dockerfile
+    command: ["/app/wait-for", "mysql:3306", "--", "node", "/app/src/index.js"]
+  
+
